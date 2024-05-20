@@ -1,0 +1,6 @@
+1  1.2033000000000000E+002 terror
+hunter
+2  7.8050000000000000E+002 suspenso
+manicomio
+3  8.5000000000000000E+002 fantasia
+legendary
