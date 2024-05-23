@@ -1,0 +1,16 @@
+1 21 44286799 candela
+silva
+2 27 77666888 namjoon
+kim
+3 25 00 jungkook
+jeon
+4 21 00 soobin
+choi
+5 22 77444999 hyunjin
+hwang
+6 78 00 minho
+lee
+88 88 99 chan
+bang
+8 77 00 beomgyu
+choi
