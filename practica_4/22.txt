@@ -1,0 +1,53 @@
+Dado el árbol B+ que se detalla más abajo, con orden 6, es decir, capacidad de 5
+claves como máximo. Muestre los estados sucesivos al realizar la siguiente secuencia de
+operaciones: +159, -5 y -190, además indicar nodos leídos y escritos en el orden de
+ocurrencia. Política de resolución underflow derecha.
+Nodo 2: 5, i, 0(10)1(60)3(115)4(145)5(179)6
+Nodo 0: 2, h, (1)(5) -> 1
+Nodo 1: 2, h, (34)(44) -> 3
+Nodo 3: 2, h, (60)(113) -> 4
+Nodo 4: 4, h, (120)(125)(131)(139) -> 5
+Nodo 5: 5, h, (145)(153)(158)(160)(177) -> 6
+Nodo 6: 2, h, (179)(190) -> -1
+
+				2:0(10)1(60)3(115)4(145)5(179)6
+
+0:(1)(5)   1:(34)(44)   3:(60)(113)   4:(120)(125)(131)(139)   5:(145)(153)(158)(160)(177)   6:(179)(190)
+---------------------------------------------------------------------------------------------------------
++159
+
+						    9:2(145)8	
+	
+				2:0(10)1(60)3(115)4		8:5(159)7(179)6
+
+0:(1)(5)  1:(34)(44)  3:(60)(113)  4:(120)(125)(131)(139)  5:(145)(153)(158)  7:(159)(160)(177)  6:(179)(190)
+
+L2,L5,E5,E7,L2,E2,E8,E9
+Overflow en el nodo 5, divido y creo el nodo 7 → [145][153][158] 159 [159][160][177]
+promociona la copia 159 y se propaga el overflow al nodo 2 → [10][60][115] 145 [159][179]
+creo un nuevo nodo 8 y 9, el arbol crece 1 nivel y promociona la clave 145 por ser un nodo interno.
+---------------------------------------------------------------------------------------------------------	
+-5
+
+				     9:2(145)8	
+	
+		2:0(60)3(115)4		8:5(159)7(179)6
+
+0:(1)(34)(44)  3:(60)(113)  4:(120)(125)(131)(139)  5:(145)(153)(158)  7:(159)(160)(177)  6:(179)(190)
+
+L9,L2,L0,L1,E0,E1,E2
+Underflow en el nodo 0, politica derecha el hermano derecho no puede redistribuir por lo que van a fusionarse.
+se elimina el separador. 
+---------------------------------------------------------------------------------------------------------
+-190
+
+				     9:2(145)8	
+	
+		2:0(60)3(115)4		8:5(159)7(177)6
+
+0:(1)(34)(44)  3:(60)(113)  4:(120)(125)(131)(139)  5:(145)(153)(158)  7:(159)(160)  6:(177)(179)
+
+L9,L8,L6,L7,E7,E6,E8
+Underflow en el nodo 6, caso especial el hermano izquierdo puede redistribuir
+actualizó el separador.
+---------------------------------------------------------------------------------------------------------

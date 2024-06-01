@@ -1,0 +1,60 @@
+24. Dado un árbol B+ de orden 5 y con política izquierda o derecha, para cada operación
+dada:
+a. Dibuje el árbol resultante
+b. Explique detalladamente las decisiones tomadas
+c. Escriba las lecturas y escrituras
+Operaciones: +250, -300, -40
+Árbol: nodo 8: 1 i 2(70)7
+nodo2:1 i 0(50)4
+nodo7: 4 i 5(90)6(120)3(210)9(300)1
+nodo 0: 1 h(40)->4
+nodo 4: 1 h(50)->5
+nodo 5: 2 h(70)(80)->6
+nodo 6: 2 h(90)(100)->3
+nodo 3: 2 h(120)(200)->9
+nodo 9: 4 h(210)(220)(230)(240)->1
+nodo 1: 2 h(400)(500)-> -1
+
+				    8:2(70)7
+
+		2:0(50)4   				7:5(90)6(120)3(210)9(300)1
+
+0:(40)4   4:(50)5   5:(70)(80)6   6:(90)(100)3   3:(120)(200)9   9:(210)(220)(230)(240)1   1:(400)(500)
+------------------------------------------------------------------------------------------------------------------
++250
+				    8:2(70)7(210)11
+
+	2:0(50)4   	7:5(90)6(120)3  		11:9(230)10(300)1
+
+0:(40)4   4:(50)5   5:(70)(80)6   6:(90)(100)3   3:(120)(200)9   9:(210)(220)   10:(230)(240)(250)1   1:(400)(500)
+
+
+L8,L7,L9,E9,E10,L7,E7,E11,E8
+
+Overflow en el nodo 9, divido y creo un nuevo nodo 10 → [210][220] 230 [230][240][250]
+promociona la copia de la clave 230
+
+se propaga el overflow en el nodo 7, divido y creo un nodo 11 → [90][120] 210 [230][300]
+promociona el valor 210 por ser nodo interno
+------------------------------------------------------------------------------------------------------------------
+-300
+				    8:2(70)7(210)11
+
+	2:0(50)4   	7:5(90)6(120)3  		11:9(230)10(300)1
+
+0:(40)4   4:(50)5   5:(70)(80)6   6:(90)(100)3   3:(120)(200)9   9:(210)(220)   10:(230)(240)(250)1   1:(400)(500)
+
+L8,L11,L1
+La clave no existe en el arbol.
+------------------------------------------------------------------------------------------------------------------
+-40
+				    8:2(90)7(210)11
+
+	2:0(70)5   	7:6(120)3  		11:9(230)10(300)1
+
+0:(50)5   5:(70)(80)6   6:(90)(100)3   3:(120)(200)9   9:(210)(220)   10:(230)(240)(250)1   1:(400)(500)
+
+L8,L2,L0,L4,E0,E4,L2,L7,E2,E7,E8
+
+Underflow en el nodo 0, no puedo redistribuir por lo que se fusionan los nodos. Se propaga el underflow al nodo 2 
+y redistribuyo con el hermano derecho. Como son nodos internos baja el 70 al nodo 2 y promociona del nodo 7 el 90
