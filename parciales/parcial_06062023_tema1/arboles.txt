@@ -1,0 +1,60 @@
+2 - arboles
+
+arbol b 
+m = 4
+politica izquierda para resolución de underflow
+
+		2:0(10)1(30)4(60)3
+
+0:(5)	1:(15)(20)(23)	4:(42)(48)	 3:(70)
+
+---------------------------------------------------------------------------------------------------
++25 l2,l1,E1,E5,L2,E2,E6,E7
+
+		      7:2(30)6
+
+	2:0(10)1(23)5		6:4(60)3
+
+0:(5)	1:(15)(20)	5:(25)	4:(42)(48)	 3:(70)
+
+Overflow en el nodo 1 al intentar agregar la clave 25, divido y creo el nodo 5 → [15][20] 23 [25]
+promociona la clave 23 y se propaga el overflow al nodo 2, divido y creo el nodo 6 y 7 → [10][23] 30 [60]
+promociona la clave 30 y el árbol sube 1 nivel. 
+---------------------------------------------------------------------------------------------------
+-30
+
+
+		      7:2(42)6
+
+	2:0(10)1(23)5		6:4(60)3
+
+0:(5)	1:(15)(20)	5:(25)	4:(48)	 3:(70)
+
+
+L7,L6,L4,E4,E7
+Al querer eliminar la raíz, sube el hijo más chico del subarbol derecho como nueva raíz. 
+---------------------------------------------------------------------------------------------------
+-5
+
+
+		      7:2(42)6
+
+	2:0(15)1(23)5		6:4(60)3
+
+0:(10)	1:(20)	5:(25)	4:(48)	 3:(70)
+
+L7,L2,L0,L1,E0,E1,E2
+Underflow en el nodo 0, como no tengo hermano izquierdo redistribuyo con el hermano derecho.
+---------------------------------------------------------------------------------------------------
+-48
+		    7:2(23)6
+
+	      2:0(15)1    6:5(42)4
+
+	0:(10)	1:(20)	5:(25)	4:(60)(70)	
+
+L7,L6,L4,L3,E4,E3,E6,L2,E2,E6,E7
+Underflow en el nodo 4, como no tengo hermano izquierdo trato de redistribuir con el hermano
+derecho, como no puedo fusiono y se libera siempre el nodo derecho. El underflow se propaga al
+nodo 6, redistribuyo con el hermano izquierdo y baja el 42.
+---------------------------------------------------------------------------------------------------

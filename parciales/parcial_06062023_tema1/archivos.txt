@@ -1,0 +1,77 @@
+program parcial;
+type
+	productos = record
+	cod : integer;
+	ubi, desc, nombre : string[20];
+	precioCom, precioVen : real;
+
+	archivo = file of producto;
+
+procedure leerProducto (var p : producto);...
+
+function existeProducto (codigo : integer; var arch : archivo): boolean; ...
+
+
+procedure agregarProducto (var arch : archivo);
+var
+	reg, indice : producto;
+begin
+reset(arch);
+leerProducto(reg);
+if (existeProducto(reg.cod,arch) then
+	writeln('el codigo ya existe');
+else begin
+	read(indice,arch);
+	if (indice.cod < 0) then begin
+		seek(arch,abs(indice.cod));
+		read(arch,indice);
+
+		seek(arch,filepos(arch)-1);
+		write(arch,reg);
+		
+		seek(arch,0);
+		write(arch,indice);
+	end
+	else begin
+		seek(arch,filesize(arch));
+		write(arch,reg);
+	end;
+close(arch);
+end;
+
+procedure quitarProducto (var arch: archivo);
+var 
+	indice, reg : producto;
+	codigo : integer;
+begin
+
+write('codigo: ); readln(codigo);
+if (not existeProducto(codigo,arch)) then 
+	writeln('no existe el producto');
+else begin
+	reset(arch);
+	read(arch,reg);
+	indice.cod := reg.cod;
+	while (reg.cod <> codigo) do 
+		read(arch,reg);
+	
+	reg.cod := indice.cod;
+	seek(arch,filepos(arch)-1);
+
+	indice.cod := filepos(arch)*-1;
+	write(arch,reg);
+
+	seek(arch,0);
+	write(arch,indice);
+end;
+
+close(arch);
+end;
+
+var
+	arch : archivo;
+BEGIN
+	Assing(arch,'productos.dat');
+	agregarProducto(arch);
+	quitarProducto(arch);
+END.
