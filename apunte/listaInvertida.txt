@@ -1,0 +1,47 @@
+ _______
+| crear |
+ ‾‾‾‾‾‾‾
+reg.cod := 0;
+write(arh,reg);
+leerRegistro(reg);
+mientras (condicion para parar):
+write(arch,reg);
+leerRegistro(reg);
+
+---------------------------------------------------
+ __________
+| eliminar |
+ ‾‾‾‾‾‾‾‾‾‾
+
+read(arch,reg);
+indice.cod := reg.cod;
+
+leo hasta que lo encuentre...
+
+cuando lo encuentro...
+
+reg.cod := indice.cod;
+seek(arch,filepos(arch)-1);
+indice.cod := filepos(arch)*-1;
+write(arch,reg);
+seek(arch,0);
+write(arch,indice);
+---------------------------------------------------
+ _________
+| agregar |
+ ‾‾‾‾‾‾‾‾‾
+→ si no existe...
+
+read(arch,indice);
+→→ si  es negativo:
+seek(arch,abs(indice.cod))
+read(arch,indice);
+seek(arch,filepos(arch)-1);
+write(arch,reg);
+seek(arch,0),
+write(arch,indice);
+
+→→ sino:
+seek(arch,filesize(arch));
+write(arch,reg);
+---------------------------------------------------
