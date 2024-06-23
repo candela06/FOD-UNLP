@@ -31,7 +31,7 @@ begin
 		regm.monto := 0;
 		while (regd.codigo = regm.codigo) do begin
 			regm.monto := regm.monto + regd.monto;
-			leer(detalle,reg);
+			leer(detalle,regd);
 		end;
 		write(maestro,regm);
 	end;
