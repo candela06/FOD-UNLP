@@ -1,183 +1,74 @@
-program untitled;
+program ej1;
+const valorAlto = 9999;
 type
 	empleado = record
-		edad,numero: integer;
-		dni,nombre,apellido: string[20];
-		end;
+	numero : integer;
+	apellido : string[20];
+	nombre : string[20];
+	edad : integer;
+	dni : string[8];
+	end;
 	
 	archivo = file of empleado;
 
-// procesos
-procedure asignar ( var empleados: archivo);
-var ruta: string[12];
+procedure leer (var mae : archivo; var reg : empleado);
 begin
-	write('ruta: ');read(ruta);
-	assign(empleados,ruta);
+	if not eof(mae) then
+		read(mae,reg)
+	else
+		reg.numero := valorAlto;
 end;
-
-function cumple ( var empleados: archivo; numero: integer): boolean;
-var e: empleado;
-		encontre: boolean;
-begin
-	encontre := false;
-	while (not eof(empleados)) and (not encontre) do begin
-		read(empleados,e);
-		if e.numero = numero then encontre := true;
-	end;
-	cumple := encontre;
-end;
-
-procedure agregarEmpleado( var empleados: archivo);
-	procedure leerEmpleado(var e: empleado);
-	begin
-		writeln();
-		write('apellido: ');readln(e.apellido);
-		if e.apellido <> 'fin' then begin
-			write('nombre: '); readln(e.nombre);
-			write('numero: '); readln(e.numero);
-			write('edad: '); readln(e.edad);
-			write('dni: '); readln(e.dni);
-		end;
-		end;
-var e: empleado;
-begin
-	reset(empleados);
-	leerEmpleado(e);
-	if not cumple(empleados,e.numero) then begin
-		seek(empleados,fileSize(empleados));
-		write(empleados,e);
-		writeln();
-		writeln('¡Empleado agregado exitosamente!');
-	end
-	else writeln('el empleado ya exitse.');
-	close(empleados);
-end;
-
-procedure modificarEdad ( var empleados: archivo);
+procedure truncar (var mae : archivo; num : integer);
 var
-	encontre: boolean;
-	e: empleado;
-	num, edad: integer;
+	ultimo : empleado;
+	reg : empleado; 
 begin
-	encontre := false;
-	reset(empleados);
-	writeln('numero de empleado que sea modificar su edad: '); read(num);
-	while (not eof(empleados)) and (not encontre) do begin
-		read(empleados,e);
-		if e.numero = num then begin
-			encontre := true;
-			writeln('nueva edad: '); read(edad);
-			e.edad := edad;
-			// me vuelvo a posicionar en el empleado encontrado
-			Seek(empleados,filepos(empleados)-1);
-			// reescribo el empleado modificado
-			write(empleados,e);
-		end;
-	end;
-	if not encontre then writeln('no existe el empleado');
+	reset(mae);
+	seek(mae,filesize(mae)-1);
+	leer(mae,ultimo); // tengo el ultimo para reemplazar
+	seek(mae,0); // comienzo de la busqueda del empleado a eliminar
+	leer(mae,reg);
+	while (reg.numero <> valorAlto) and (reg.numero <> num) do
+		leer(mae,reg);
 	
-	close(empleados);
+	if reg.numero = num then begin
+		seek(mae,filepos(mae)-1);
+		write(mae,ultimo);
+		seek(mae,filesize(mae)-1);
+		truncate(mae);
+		writeln('baja realizada');
+	end
+	else
+		writeln('El empleado no existe');
+	close(mae);
 end;
-
-procedure exportartxt (var empleados: archivo);
+procedure exportarTxt (var arch : archivo);
 var
-	e: empleado;
-	txt: Text;
+	reg : empleado;
+	txt : Text;
 begin
-	assign(txt,'todos_empleados.txt');
+	assign(txt,'empleados.txt');
 	rewrite(txt);
-	reset(empleados);
-	while not eof(empleados) do begin
-		read(empleados,e);
-		with e do begin
-			writeln(txt,numero,' ',edad,' ',dni,' ',nombre);
+	reset(arch);
+	leer(arch,reg);
+	while (reg.numero <> valorAlto) do begin
+		with reg do begin
+			writeln(txt,numero,' ',edad,' ',dni);
 			writeln(txt,apellido);
+			writeln(txt,nombre);
 		end;
+		leer(arch,reg);
 	end;
-	writeln('exportación exitosa...');
-	close(empleados);
+	close(arch);
 	close(txt);
-end;
-procedure exportartxtDni( var empleados: archivo);
-var
-	txt: Text;
-	e: empleado;
-begin
-	assign(txt,'faltaDNIEmpleado.txt');
-	rewrite(txt);
-	reset(empleados);
-	while not eof(empleados) do begin
-		read(empleados,e);
-		with e do begin
-			if dni = '00' then begin
-				writeln(txt,numero,' ',edad,' ',dni,' ',nombre);
-				writeln(txt,apellido);
-			end;
-		end;
-	end;
-	close(txt);
-	close(empleados);
 end;
 
-procedure eliminarReg ( var empleados : archivo );
 var
+	mae : archivo;
 	num : integer;
-	ultEmp, e : empleado;
-begin
-	
-	reset(empleados);
-	write('numero de empleado a eliminar: '); readln(num);
-	// busco el ultimo empleado
-	seek(empleados, fileSize(empleados)-1);
-	read(empleados, ultEmp);
-	// busco el primer empleado
-	seek(empleados, 0);
-	read(empleados, e);
-	// busco al empleado
-	while(not eof(empleados) and (e.numero <> num)) do
-			read(empleados, e);
-	
-	// si lo encuentro...
-	if(e.numero = num) then begin
-		// regreso a ese empleado
-		seek(empleados, filePos(empleados)-1);
-		// reemplazo el registro con el ultimo empleado
-		write(empleados, ultEmp);
-		// busco el final del archivo y lo acorto
-		seek(empleados, fileSize(empleados)-1);
-		truncate(empleados);
-		writeln('se realizo la baja correctamente');
-	end
-	else writeln('No se encontro el empleado con codigo ',num);
-	
-	close(empleados);
-end;
-
-var op : byte;
-		empleados : archivo;
-
 BEGIN
-	asignar(empleados);
-	
-	repeat
-		writeln();
-		writeln('--------- | MENU | ---------');
-		writeln('| 1) agregar empleado.');
-		writeln('| 2) modificar edad. ');
-		writeln('| 3) exportar a txt. ');
-		writeln('| 4) exportar empleados con dni 00.');
-		writeln('| 5) eliminar registro.');
-		writeln('| 6) salir.');
-		writeln('| OPCION: '); readln(op);
-		writeln('----------------------------');
-		writeln();
-		case op of
-			1: agregarEmpleado(empleados);
-			2: modificarEdad(empleados);
-			3: exportartxt(empleados);
-			4: exportartxtDni(empleados);
-			5: eliminarReg(empleados);
-		end;
-	until op = 6;
+	assign(mae,'empleados.dat');
+	write('numero de empleado para eliminar: '); readln(num);
+	truncar(mae,num);
+	exportarTxt(mae);
 END.
-
